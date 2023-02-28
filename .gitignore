@@ -1,0 +1,7 @@
+dist/
+package-lock.json
+pnpm-lock.yaml
+.DS_Store
+node_modules
+todo.md
+scraps.txt
