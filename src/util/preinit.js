@@ -3,6 +3,40 @@ document.dir = 'rtl'
 // document.dir = window.APP_LANG === 'ar' ? 'rtl' : 'ltr'
 // document.documentElement.lang = window.APP_LANG
 
+if (!window.__DEBUG__) {
+    // Check localStorage + indexedDB
+    try {
+        localStorage.setItem('_TEST_KEY_', 1)
+        localStorage.removeItem('_TEST_KEY_')
+    } catch (e) {
+        delete window['localStorage']
+        localStorage = {setItem: () => {}, getItem: () => {}, removeItem: () => {}}
+    }
+    indexedDB.open('_TEST_DB_', 1).onerror = () => {
+        alert('لم نتمكن من فتح قاعدة البيانات! عذرا، لن يعمل التطبيق.')
+        window.__debug('Failed to open DB')
+    }
+
+    // Error logging
+    window.ERROR_COUNT = 0
+    function post_error(parts) {
+        parts = [decodeURI(location) + ' - ' + window.__BUILD_HASH__, ...parts, navigator.userAgent]
+        const body = JSON.stringify({err: parts.join('\n'), site: location.host})
+        fetch('https://tafsir.app/err.php', {method: 'post', mode: 'no-cors', body})
+    }
+    window.onerror = (msg, url, ln, col, err) => {
+        if (window.ERROR_COUNT++ > 50)
+            return
+        const loc = [(url || '').replace('https://', ''), ln || '', col || ''].join(':')
+        post_error([msg, loc, err ? err.stack : '<no stack>'])
+    }
+    window.onunhandledrejection = e => {
+        if (window.ERROR_COUNT++ > 50 || !(e && e.reason && e.reason.stack) || e.reason.stack.includes('TypeError: Failed to fetch'))
+            return
+        post_error(['(PROMISE) - ' + e.reason.stack])
+    }
+}
+
 // User agent
 {
     const UA = navigator.userAgent
