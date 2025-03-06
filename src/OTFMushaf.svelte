@@ -66,7 +66,7 @@ const tajweed_repls = [
     [/(آ)(لْ)/g,                        '<.madd-lazim>$1</span>$2'],
     [/(ـ?[اويٰ]ٓ)([ـ ]?ى?[ٕٔءأإؤئ])/g,     '<.madd-wajib>$1</span>$2'],
     [/([\u06E5\u06E6]ٓ)/g,              '<.madd-wajib>$1</span> '],
-    [/(َا|ِي|ُو)(?=...[۝\n])/g,               (m, m1) => `<.madd-aarid>${m1}</span>`],
+    [/(َا|ِي|ُو)(?=...[۝\n])/g,           (m, m1) => `<.madd-aarid>${m1}</span>`],
 
     [/ٱل(.ّ)/g,                         'ٱ<.idgham>ل</span>$1'],
     [/([لّ?.])ل(.ّ)/g,                   '$1<.idgham>ل</span>$2'],
@@ -85,16 +85,9 @@ const tajweed_repls = [
 ]
 
 
-async function front_click(el) {
-    // const [s, a] = el.dataset.ref.split(',')
-    // const aid = get_ayah_id(+s, +a)
-    // const link = `<a href=https://tafsir.app/${a}/${a} target=_blank>الباحث القرآني</a>`
-    // const quran = await get(session).db.get('deck_text', 'quran')
-    tip_options.set({show: true, msg: `hello<br>`, attach_to: el})
-}
 function main_click(e) {
     if (e.target.matches('span.tajweed-tip')) {
-        tip_options.set({show: true, msg: tajweed_tips[e.target.classList[1]], attach_to: e.target})
+        tip_options.set({show: true, msg: tajweed_tips[e.target.classList[1]], attach_to: e.target, direction: 'top'})
         e.stopPropagation()
     }
 }
@@ -111,11 +104,11 @@ const tajweed_tips = {
 <style>
 @font-face {
   font-family: digitalkhatt;
-  src: url(https://raw.githubusercontent.com/DigitalKhatt/madinafont/main/digitalkhatt.otf);
+  src: url(https://raw.githubusercontent.com/DigitalKhatt/madinafont/main/madina.woff2);
 }
 @font-face {
   font-family: digitalkhatt;
-  src: url(https://raw.githubusercontent.com/DigitalKhatt/madinafont/main/digitalkhatt.otf);
+  src: url(https://raw.githubusercontent.com/DigitalKhatt/madinafont/main/madina.woff2);
   font-weight: bold;
 }
 @font-face {
@@ -125,10 +118,10 @@ const tajweed_tips = {
 main {
   font-family: digitalkhatt;
   font-size: 1.2rem;
-  width: 475px;
+  max-width: min(475px, 95vw);
   line-height: 1.9;
   margin: 0 auto;
-  max-height: 100vh;
+  max-height: 90vh;
   overflow: auto;
 }
 main.variable_font {
@@ -163,11 +156,18 @@ h1 {
   font-size: 2rem;
 }
 
-.tip-arrow::before {
-  border: none !important;
+:global {
+    .tip-arrow::before {
+      /* border: none !important; */
+    }
+    .tooltip-inner {
+      color: var(--tip-color) !important;
+      background: #444 !important;
+    }
+    .tooltip-top .tip-arrow::before {
+      top: 0;
+      border-width: 0.4rem 0.4rem 0;
+      border-top-color: #444 !important
 }
-.tooltip-inner {
-  color: var(--tip-color) !important;
-  background: #444 !important;
 }
 </style>
