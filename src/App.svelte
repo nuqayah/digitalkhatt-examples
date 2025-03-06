@@ -14,4 +14,5 @@ import OTFMushaf from './OTFMushaf.svelte'
 import Wasm from './Wasm.svelte'
 import MushafGen from './mushafgen/MushafGen.svelte'
 router.mode.memory()
+router.goto('/otf-mushaf')
 </script>
